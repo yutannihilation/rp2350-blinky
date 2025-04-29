@@ -41,7 +41,15 @@ async fn cyw43_task(
 async fn main(spawner: Spawner) {
     let p = embassy_rp::init(Default::default());
 
-    let cs = Output::new(p.PIN_25, Level::High);
+    // The following GPIO pins are connected with wireless interface via SPI.
+    //
+    // cf. https://datasheets.raspberrypi.com/picow/pico-2-w-schematic.pdf
+    let pin_wl_on = p.PIN_23;
+    let pin_wl_d = p.PIN_24;
+    let pin_wl_cs = p.PIN_25;
+    let pin_wl_clk = p.PIN_29;
+
+    let cs = Output::new(pin_wl_cs, Level::High);
     let mut pio = Pio::new(p.PIO0, Irqs);
     let spi = PioSpi::new(
         &mut pio.common,
@@ -49,12 +57,12 @@ async fn main(spawner: Spawner) {
         DEFAULT_CLOCK_DIVIDER,
         pio.irq0,
         cs,
-        p.PIN_24,
-        p.PIN_29,
+        pin_wl_d,
+        pin_wl_clk,
         p.DMA_CH0,
     );
 
-    let pwr = Output::new(p.PIN_23, Level::Low);
+    let pwr = Output::new(pin_wl_on, Level::Low);
     let fw = include_bytes!("../cyw43-firmware/43439A0.bin");
     static STATE: StaticCell<cyw43::State> = StaticCell::new();
     let state = STATE.init(cyw43::State::new());
