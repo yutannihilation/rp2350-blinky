@@ -1,0 +1,43 @@
+[package]
+name = "rp2350-blink"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# cortex-m-rt is used in embassy-executor's macro
+cortex-m-rt = "0.7.5"
+
+# It seems crates.io version gives this error:  task arena is full
+# To avoid it, https://github.com/embassy-rs/embassy/pull/4020 is necessary
+embassy-executor = { version = "0.7.0", git = "https://github.com/embassy-rs/embassy", features = [
+    "arch-cortex-m",
+    "executor-thread",
+    "executor-interrupt",
+    "defmt",
+] }
+embassy-rp = { version = "0.4.0", git = "https://github.com/embassy-rs/embassy", features = [
+    "defmt",
+    "unstable-pac",
+    "time-driver",
+    "critical-section-impl",
+    "rp235xa",
+    "binary-info",
+] }
+embassy-time = { version = "0.4.0", git = "https://github.com/embassy-rs/embassy", features = [
+    "defmt",
+    "defmt-timestamp-uptime",
+] }
+
+defmt = "1.0.1"
+defmt-rtt = "1.0.0"
+panic-probe = "1.0.0"
+
+static_cell = "2.1.0"
+
+cyw43 = { version = "0.3.0", git = "https://github.com/embassy-rs/embassy", features = [
+    "defmt",
+    "firmware-logs",
+] }
+cyw43-pio = { version = "0.4.0", git = "https://github.com/embassy-rs/embassy", features = [
+    "defmt",
+] }
